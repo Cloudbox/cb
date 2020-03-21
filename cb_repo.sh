@@ -56,6 +56,8 @@ done
 
 $VERBOSE || exec &>/dev/null
 
+$VERBOSE && echo "Branch selected: "$BRANCH
+
 ## Clone Cloudbox and pull latest commit
 if [ -d "$CLOUDBOX_PATH" ]; then
     if [ -d "$CLOUDBOX_PATH/.git" ]; then
