@@ -33,8 +33,7 @@ readonly APT_SOURCES_URL="https://raw.githubusercontent.com/cloudbox/cb/master/a
 readonly PYTHON_CMD_SUFFIX="-m pip install \
                               --no-cache-dir \
                               --disable-pip-version-check \
-                              --upgrade \
-                              --force-reinstall"
+                              --upgrade"
 readonly PYTHON3_CMD="python3 $PYTHON_CMD_SUFFIX"
 readonly PYTHON2_CMD="python $PYTHON_CMD_SUFFIX"
 readonly PIP="9.0.3"
