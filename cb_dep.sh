@@ -29,14 +29,14 @@ fi
 VERBOSE=false
 
 readonly SYSCTL_PATH="/etc/sysctl.conf"
-readonly APT_SOURCES_URL="https://raw.githubusercontent.com/cloudbox/cb/master/apt-sources"
 readonly PYTHON_CMD_SUFFIX="-m pip install \
                               --no-cache-dir \
                               --disable-pip-version-check \
                               --upgrade"
 readonly PYTHON3_CMD="python3 $PYTHON_CMD_SUFFIX"
 readonly PYTHON2_CMD="python $PYTHON_CMD_SUFFIX"
-readonly PIP="9.0.3"
+readonly PIP="20.3.4"
+readonly PIP3="21.0.1"
 readonly ANSIBLE=">=2.9,<2.10"
 
 ################################
@@ -57,35 +57,11 @@ $VERBOSE || exec &>/dev/null
 
 ## Disable IPv6
 if [ -f "$SYSCTL_PATH" ]; then
-    if [[ $(lsb_release -rs) < 18.04 ]]; then
-        ## Add 'Disable IPv6' entries into systctl
-        grep -q -F 'net.ipv6.conf.all.disable_ipv6 = 1' "$SYSCTL_PATH" || \
-            echo 'net.ipv6.conf.all.disable_ipv6 = 1' >> "$SYSCTL_PATH"
-        grep -q -F 'net.ipv6.conf.default.disable_ipv6 = 1' "$SYSCTL_PATH" || \
-            echo 'net.ipv6.conf.default.disable_ipv6 = 1' >> "$SYSCTL_PATH"
-        grep -q -F 'net.ipv6.conf.lo.disable_ipv6 = 1' "$SYSCTL_PATH" || \
-            echo 'net.ipv6.conf.lo.disable_ipv6 = 1' >> "$SYSCTL_PATH"
-        sysctl -p
-    else
-        ## Remove 'Disable IPv6' entries from systctl
-        sed -i -e '/^net.ipv6.conf.all.disable_ipv6/d' "$SYSCTL_PATH"
-        sed -i -e '/^net.ipv6.conf.default.disable_ipv6/d' "$SYSCTL_PATH"
-        sed -i -e '/^net.ipv6.conf.lo.disable_ipv6/d' "$SYSCTL_PATH"
-        sysctl -p
-    fi
-fi
-
-## AppVeyor
-if [ "$SUDO_USER" = "appveyor" ]; then
-    rm /etc/apt/sources.list.d/*
-    rm /etc/apt/sources.list
-    if [[$(lsb_release -cs) == "bionic" ]]; then
-        APT_SOURCES_URL="$APT_SOURCES_URL/bionic.txt"
-    else
-        APT_SOURCES_URL="$APT_SOURCES_URL/xenial.txt"
-    fi
-    curl $APT_SOURCES_URL | tee /etc/apt/sources.list
-    apt-get update
+    ## Remove 'Disable IPv6' entries from systctl
+    sed -i -e '/^net.ipv6.conf.all.disable_ipv6/d' "$SYSCTL_PATH"
+    sed -i -e '/^net.ipv6.conf.default.disable_ipv6/d' "$SYSCTL_PATH"
+    sed -i -e '/^net.ipv6.conf.lo.disable_ipv6/d' "$SYSCTL_PATH"
+    sysctl -p
 fi
 
 ## Environmental Variables
@@ -120,7 +96,7 @@ apt-get install -y --reinstall \
 
 ## Install pip3 Dependencies
 $PYTHON3_CMD \
-    pip==${PIP}
+    pip==${PIP3}
 $PYTHON3_CMD \
     setuptools
 $PYTHON3_CMD \
